@@ -1,4 +1,4 @@
-const WHITELIST_DOMAINS = ["http://www.w3.org", "http://localhost:5173"];
+const WHITELIST_DOMAINS = ["http://www.w3.org", "http://localhost:5173", "https://iot-fe-alpha.vercel.app"];
 const STATUS_RESPONSE = {
   OK: 200,
   CREATED: 201,
