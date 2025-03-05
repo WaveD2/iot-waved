@@ -4,11 +4,9 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const routes = require("./src/Routers");
 const { errorHandlingMiddleware } = require("./src/middleware/catchingErrors/catchingErrorMiddleware");
-const { corsOptions } = require("./src/config/cors");
 
 const app = express();
-
-app.use(cors(corsOptions));
+ 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
