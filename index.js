@@ -8,7 +8,7 @@ dotenv.config();
 const port = process.env.PORT || 4000;
 const server = http.createServer(app);
 
-mongoose.connect(process.env.MONGO_DB, {
+mongoose.connect("mongodb+srv://tungdev64:8FtxSZp9VAjQla0F@iot.vbunp.mongodb.net", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
