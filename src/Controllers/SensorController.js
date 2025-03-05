@@ -5,7 +5,6 @@ const {
   getLatestSensorData,
   getAverageSensorData
 } = require('../services/SensorService');
-const { logger } = require('../utils/logger');
 const { helper } = require('../utils/fun');
 
 // Lưu dữ liệu từ cảm biến
@@ -29,7 +28,7 @@ async function recordSensorData(req, res) {
     const savedData = await saveSensorData(sensorData);
     res.status(201).json(savedData);
   } catch (error) {
-    logger.error('Error recording sensor data:', error);
+    console.error('Error recording sensor data:', error);
     res.status(400).json({ message: error.message });
   }
 }
@@ -51,7 +50,7 @@ async function getUserSensorData(req, res) {
     const data = await getSensorDataByUserId(userId.toString(), filter.limit);
     res.status(200).json(data);
   } catch (error) {
-    logger.error('Error getting user sensor data:', error);
+    console.error('Error getting user sensor data:', error);
     res.status(500).json({ message: error.message });
   }
 }
@@ -79,7 +78,7 @@ async function getSensorDataByTime(req, res) {
     const data = await getSensorDataByTimeRange(userId.toString(), start, end);
     res.status(200).json(data);
   } catch (error) {
-    logger.error('Error getting sensor data by time:', error);
+    console.error('Error getting sensor data by time:', error);
     res.status(500).json({ message: error.message });
   }
 }
@@ -103,7 +102,7 @@ async function getLatestData(req, res) {
 
     res.status(200).json(data);
   } catch (error) {
-    logger.error('Error getting latest sensor data:', error);
+    console.error('Error getting latest sensor data:', error);
     res.status(500).json({ message: error.message });
   }
 }
@@ -131,7 +130,7 @@ async function getAverageData(req, res) {
     const data = await getAverageSensorData(userId.toString(), start, end);
     res.status(200).json(data);
   } catch (error) {
-    logger.error('Error getting average sensor data:', error);
+    console.error('Error getting average sensor data:', error);
     res.status(500).json({ message: error.message });
   }
 }

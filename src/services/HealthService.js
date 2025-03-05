@@ -2,7 +2,7 @@ const {
     getSensorDataByTimeRange,
     getAverageSensorData
 } = require('./SensorService');
-const { logger } = require('../utils/logger');
+ 
 const { HealthModel, TemperatureModel } = require('../Model/Health');
 
 // Phân tích xu hướng nhịp tim
@@ -59,7 +59,7 @@ async function analyzeHeartRateTrend(
 
         return { trend, data: dailyAverages };
     } catch (error) {
-        logger.error('Lỗi tính toán nhịp tim:', error);
+        console.error('Lỗi tính toán nhịp tim:', error);
         throw error;
     }
 }
@@ -117,7 +117,7 @@ async function analyzeTemperatureTrend(
 
         return { trend, data: dailyAverages };
     } catch (error) {
-        logger.error('Lỗi tính toán nhiệt độ:', error);
+        console.error('Lỗi tính toán nhiệt độ:', error);
         throw error;
     }
 }

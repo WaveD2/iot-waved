@@ -1,7 +1,6 @@
 const { HealthModel, TemperatureModel } = require('../Model/Health');
 const { validateSensorData } = require('../validations/validateSensor');
 const { createNotificationIfNeeded } = require('../services/NotificationService');
-const { logger } = require('../utils/logger');
 
 async function saveSensorData(data) {
     try {
@@ -56,7 +55,7 @@ async function getLatestSensorData(userId) {
        return await HealthModel.findOne({ userId })
             .sort({ createdAt: -1 });
     } catch (error) {
-        logger.error('Error getting latest sensor data:', error);
+        console.error('Error getting latest sensor data:', error);
         throw error;
     }
 }

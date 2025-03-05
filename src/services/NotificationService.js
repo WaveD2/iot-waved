@@ -1,7 +1,5 @@
 const Notification = require('../Model/Notification');
 const { sendNotification } = require('../config/websocket');
-const { logger } = require('../utils/logger');
-
 // Các ngưỡng cảnh báo
 const THRESHOLDS = {
     HEART_RATE: {
@@ -62,10 +60,10 @@ async function createNotificationIfNeeded(data) {
             };
 
             sendNotification(data.userId, wsMessage);
-            logger.info(`Notification created and sent: ${message}`);
+            console.info(`Notification created and sent: ${message}`);
         }
     } catch (error) {
-        logger.error('Error creating notification:', error);
+        console.error('Error creating notification:', error);
         throw error;
     }
 }
@@ -79,7 +77,7 @@ async function getNotificationsByUserId(userId, limit){
 
         return notifications;
     } catch (error) {
-        logger.error('Error getting notifications:', error);
+        console.error('Error getting notifications:', error);
         throw error;
     }
 }
@@ -95,7 +93,7 @@ async function markNotificationAsRead(notificationId) {
 
         return notification;
     } catch (error) {
-        logger.error('Error marking notification as read:', error);
+        console.error('Error marking notification as read:', error);
         throw error;
     }
 }
@@ -108,7 +106,7 @@ async function markAllNotificationsAsRead(userId) {
             { read: true }
         );
     } catch (error) {
-        logger.error('Error marking all notifications as read:', error);
+        console.error('Error marking all notifications as read:', error);
         throw error;
     }
 }
