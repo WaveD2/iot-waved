@@ -17,6 +17,7 @@ mongoose.connect("mongodb+srv://tungdev64:8FtxSZp9VAjQla0F@iot.vbunp.mongodb.net
   console.error("Failed to connect to MongoDB:", err.message);
 });
 
+
 server.listen(port, () => {
   console.log(`HTTP + WebSocket server running on port: ${port}`);
 });

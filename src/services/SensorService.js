@@ -24,7 +24,7 @@ async function saveSensorData(data) {
 async function getSensorDataByUserId(userId, limit) {
     try {
         const healthModel = await HealthModel.find({ userId })
-            .sort({ createdAt: -1 })
+            .select('heartRate userId createdAt').sort({ createdAt: 1 }).lean()
             .limit(limit);
 
         return healthModel;
@@ -43,7 +43,7 @@ async function getSensorDataByTimeRange(
         return await HealthModel.find({
             userId,
             createdAt: { $gte: startTime, $lte: endTime }
-        }).sort({ createdAt: 1 });
+        }).select('heartRate userId createdAt').sort({ createdAt: 1 }).lean();
     } catch (error) {
         throw error;
     }
@@ -53,7 +53,7 @@ async function getSensorDataByTimeRange(
 async function getLatestSensorData(userId) {
     try {
        return await HealthModel.findOne({ userId })
-            .sort({ createdAt: -1 });
+            .select('heartRate userId createdAt').sort({ createdAt: 1 }).lean();
     } catch (error) {
         console.error('Error getting latest sensor data:', error);
         throw error;

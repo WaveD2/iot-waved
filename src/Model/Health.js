@@ -20,6 +20,7 @@ const HealthSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+HealthSchema.index({ userId: 1, createdAt: 1 });
 const HealthModel = mongoose.model("Health", HealthSchema);
 
 
@@ -41,6 +42,7 @@ const TemperatureSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+TemperatureSchema.index({ userId: 1, createdAt: 1 });
 const TemperatureModel = mongoose.model("Temperature", TemperatureSchema);
 
 module.exports = {

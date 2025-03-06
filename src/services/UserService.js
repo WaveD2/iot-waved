@@ -73,15 +73,9 @@ const loginUser = userLogin => {
         id: checkUser.id,
         email: checkUser.email
       }, process.env.PRIVATE_KEY);
-      const soketi = process.env.SOKETI;
+      const soketi = process.env.SOKETI_CHANNEL;
       console.log("chanel::", soketi);
       
-      triggerWs('user', "123", JSON.stringify({
-        id: checkUser.id,
-        email: checkUser.email,
-        createdAt: checkUser.createdAt
-      }))
-
       resolve({
         status: STATUS_RESPONSE.OK,
         message: "SUCCESS",

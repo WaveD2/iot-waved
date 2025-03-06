@@ -1,4 +1,5 @@
 const HealthService = require("../services/HealthService");
+const { STATUS_RESPONSE } = require("../utils/constants");
 
 // lay danh sach nhip tim
 const getHeartRateTrend = async (req, res) => {
@@ -8,7 +9,7 @@ const getHeartRateTrend = async (req, res) => {
     const response = await HealthService.analyzeHeartRateTrend(currentUserId, days)
     return res.status(200).json({
       status: STATUS_RESPONSE.OK,
-      data: response,
+      data: response
     });
   } catch (e) {
     return res.status(404).json({

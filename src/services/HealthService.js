@@ -4,6 +4,7 @@ const {
 } = require('./SensorService');
  
 const { HealthModel, TemperatureModel } = require('../Model/Health');
+const { triggerWs } = require('../websocket');
 
 // Phân tích xu hướng nhịp tim
 async function analyzeHeartRateTrend(
@@ -11,53 +12,82 @@ async function analyzeHeartRateTrend(
     days
 ){
     try {
-        const endDate = new Date();
-        const startDate = new Date();
-        startDate.setDate(startDate.getDate() - days);
+        if (!days || days <= 0) {
+            throw new Error('Số ngày (days) không hợp lệ');
+        }
 
-        // Lấy dữ liệu trong khoảng thời gian
+        const endDate = new Date();
+        endDate.setHours(23, 59, 59, 999); // Kết thúc của ngày hiện tại
+
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - days + 1); // Bắt đầu từ ngày `days` trước
+        startDate.setHours(0, 0, 0, 0); // Đầu ngày đầu tiên
+
+        // Lấy dữ liệu cảm biến trong khoảng thời gian
         const data = await getSensorDataByTimeRange(userId, startDate, endDate);
 
-        // Tính trung bình nhịp tim theo ngày
-        const dailyAverages= [];
-        for (let i = 0; i < days; i++) {
-            const day = new Date(startDate);
-            day.setDate(day.getDate() + i);
+        if (!Array.isArray(data) || data.length === 0) {
+            // Không có dữ liệu trả về, đánh dấu toàn bộ ngày là không có nhịp tim
+            return { trend: 'stable', data: Array(days).fill(0) };
+        }
 
-            const dayStart = new Date(day);
+        const dailyAverages = [];
+
+        for (let i = 0; i < days; i++) {
+            const currentDay = new Date(startDate);
+            currentDay.setDate(currentDay.getDate() + i);
+
+            const dayStart = new Date(currentDay);
             dayStart.setHours(0, 0, 0, 0);
 
-            const dayEnd = new Date(day);
+            const dayEnd = new Date(currentDay);
             dayEnd.setHours(23, 59, 59, 999);
 
+            // Lọc ra dữ liệu trong ngày hiện tại
             const dayData = data.filter(item => {
-                const timestamp = new Date(item.timestamp);
+                const timestamp = new Date(item.createdAt);
                 return timestamp >= dayStart && timestamp <= dayEnd;
             });
 
             if (dayData.length > 0) {
                 const sum = dayData.reduce((acc, item) => acc + item.heartRate, 0);
-                dailyAverages.push(parseFloat((sum / dayData.length).toFixed(1)));
+                const avg = parseFloat((sum / dayData.length).toFixed(1));
+                dailyAverages.push(avg);
             } else {
+                // Không có dữ liệu cho ngày này
                 dailyAverages.push(0);
             }
         }
 
         // Xác định xu hướng
-        //'increasing' | 'decreasing' | 'stable'
         let trend = 'stable';
-        if (dailyAverages.length >= 2) {
-            const first = dailyAverages[0];
-            const last = dailyAverages[dailyAverages.length - 1];
+        const validData = dailyAverages.filter(value => value > 0); // Loại ngày không có dữ liệu ra khỏi tính xu hướng
 
-            if (last - first > 5) {
+        if (validData.length >= 2) {
+            const first = validData[0];
+            const last = validData[validData.length - 1];
+            const change = last - first;
+
+            if (change > 5) {
                 trend = 'increasing';
-            } else if (first - last > 5) {
+            } else if (change < -5) {
                 trend = 'decreasing';
             }
         }
 
-        return { trend, data: dailyAverages };
+        // Gửi thông tin qua websocket
+        triggerWs('user', `${userId}`, JSON.stringify({
+            id: userId,
+            trend,
+            dailyAverages,
+        }));
+        const result = {
+            trend,
+            dailyAverages,
+            data
+        }
+        return result
+
     } catch (error) {
         console.error('Lỗi tính toán nhịp tim:', error);
         throw error;
@@ -90,7 +120,7 @@ async function analyzeTemperatureTrend(
             dayEnd.setHours(23, 59, 59, 999);
 
             const dayData = data.filter(item => {
-                const timestamp = new Date(item.timestamp);
+                const timestamp = new Date(item.createdAt);
                 return timestamp >= dayStart && timestamp <= dayEnd;
             });
 

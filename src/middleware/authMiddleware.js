@@ -12,16 +12,16 @@ const authMiddleware = async (req, res, next) => {
 
   const accessToken = req.headers.authorization.split(" ")[1];
   
-  const user = verifyToken(accessToken, process.env.PRIVATE_KEY);
+  const {payload} = verifyToken(accessToken, process.env.PRIVATE_KEY);
   
-  if (!user) {
+  if (!payload) {
     return res.status(400).json({
       status: STATUS_RESPONSE.NOT_FOUND,
       message: "Access Token đã hết hạn",
     });
   }
 
-  req.user = user;
+  req.user = payload;
   next();
 };
 
