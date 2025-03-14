@@ -76,6 +76,15 @@ const loginUser = userLogin => {
       const soketi = process.env.SOKETI_CHANNEL;
       console.log("chanel::", soketi);
       
+      // gui tin hiet bat may
+      triggerWs('user', `${checkUser.id}`, JSON.stringify({
+        id: checkUser.id,
+        email: checkUser.email,
+        createdAt: checkUser.createdAt,
+        title: 'login',
+        type: 'iot'
+      }));
+
       resolve({
         status: STATUS_RESPONSE.OK,
         message: "SUCCESS",

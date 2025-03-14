@@ -75,12 +75,16 @@ async function analyzeHeartRateTrend(
             }
         }
 
-        // Gửi thông tin qua websocket
+        // Gửi thông tin qua websocket den web
         triggerWs('user', `${userId}`, JSON.stringify({
             id: userId,
             trend,
             dailyAverages,
+            data,
+            title: 'heartRate',
+            type : 'web'
         }));
+
         const result = {
             trend,
             dailyAverages,
@@ -145,7 +149,8 @@ async function analyzeTemperatureTrend(
             }
         }
 
-        return { trend, data: dailyAverages };
+
+        return { trend, dailyAverages };
     } catch (error) {
         console.error('Lỗi tính toán nhiệt độ:', error);
         throw error;
@@ -207,7 +212,18 @@ async function generateHealthReport(
 
 async function createHeart(data) {
     try {
-        return await HealthModel.create(data);
+        const result = await HealthModel.create(data);
+        const { trend, dailyAverages } = await analyzeHeartRateTrend(data.userId, 7);
+        triggerWs('user', `${userId}`, JSON.stringify({
+            id: userId,
+            trend,
+            dailyAverages,
+            data: result,
+            title: 'heartRate',
+            type: 'web'
+        }));
+
+        return result;
     } catch (error) {
         throw error;
     }
@@ -215,7 +231,17 @@ async function createHeart(data) {
 
 async function createTemperature(data) {
     try {
-        return await TemperatureModel.create(data);
+        const result = await TemperatureModel.create(data);
+        const { trend, dailyAverages } = await analyzeTemperatureTrend(data.userId, 7);
+        triggerWs('user', `${userId}`, JSON.stringify({
+            id: userId,
+            trend,
+            dailyAverages,
+            data: result,
+            title: 'temperature',
+            type: 'web'
+        }));
+        return result;
     } catch (error) {
         throw error;
     }

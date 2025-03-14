@@ -13,9 +13,10 @@ const {
 
 router.post("/sign-up", validationSignup, userController.createUser);
 router.post("/sign-in", validationLogin, userController.loginUser);
-router.post("/log-out", userController.logoutUser);
+
 
 router.use(authMiddleware);
+router.post("/log-out", userController.logoutUser);
 router.patch("/update-user/:id", userController.updateUser);
 router.get("/get-detail/:id",userController.getDetailsUser);
 router.post("/refresh-token/:id",userController.refreshToken);
