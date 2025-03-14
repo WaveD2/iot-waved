@@ -74,15 +74,20 @@ const loginUser = userLogin => {
         email: checkUser.email
       }, process.env.PRIVATE_KEY);
       const soketi = process.env.SOKETI_CHANNEL;
-      console.log("chanel::", soketi);
       
       // gui tin hiet bat may
-      triggerWs('user', `${checkUser.id}`, JSON.stringify({
+      triggerWs('user', "iot", JSON.stringify({
         id: checkUser.id,
         email: checkUser.email,
         createdAt: checkUser.createdAt,
-        title: 'login',
-        type: 'iot'
+        title: 'turnon',
+      }));
+
+      triggerWs('user', "web", JSON.stringify({
+        id: checkUser.id,
+        email: checkUser.email,
+        createdAt: checkUser.createdAt,
+        title: 'turnon',
       }));
 
       resolve({

@@ -158,9 +158,8 @@ const refreshToken = async (req, res) => {
 
 const logoutUser = async (req, res) => {
   try {
-    triggerWs('user', `${req.user.id}`, JSON.stringify({
-      title: 'logout',
-      type: 'iot'
+    triggerWs('user', "iot", JSON.stringify({
+      title: 'turnoff',
     }));
     
     res.clearCookie("refresh_token");
